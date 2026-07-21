@@ -5,16 +5,16 @@
 
 ## ⚠️ 接口域名（重要）
 
-Dify 等云服务器请使用 **jsDelivr CDN 域名**（github.io 在国内服务器经常不可达）：
+**首选：阿里云 OSS（国内服务器/Dify 直连，最快最稳）**
 
 ```
-https://cdn.jsdelivr.net/gh/suzyzaq/auth-cert-db@main/api/
+https://supply-auto-project.oss-cn-hangzhou.aliyuncs.com/auth-cert-db/api/
 ```
 
-备用域名（任一可达即可）：
+**备用：jsDelivr CDN**（github.io 在国内服务器经常不可达，勿用）
+- `https://cdn.jsdelivr.net/gh/suzyzaq/auth-cert-db@main/api/`
 - `https://fastly.jsdelivr.net/gh/suzyzaq/auth-cert-db@main/api/`
 - `https://gcore.jsdelivr.net/gh/suzyzaq/auth-cert-db@main/api/`
-- `https://testingcf.jsdelivr.net/gh/suzyzaq/auth-cert-db@main/api/`
 
 浏览器访问查询页面仍用：https://suzyzaq.github.io/auth-cert-db/
 
@@ -56,7 +56,7 @@ shard/N.json 结构：
 
 **节点1 · HTTP 请求（GET 索引）**
 - 方法：GET
-- URL：`https://cdn.jsdelivr.net/gh/suzyzaq/auth-cert-db@main/api/index.json`
+- URL：`https://supply-auto-project.oss-cn-hangzhou.aliyuncs.com/auth-cert-db/api/index.json`
 
 **节点2 · 代码执行（品牌模糊匹配 → 待查分片）**（Python3）
 ```python
@@ -70,7 +70,7 @@ def main(index: dict, keyword: str) -> dict:
 
 **节点3 · HTTP 请求（GET 分片，多个分片用迭代）**
 - 方法：GET
-- URL：`https://cdn.jsdelivr.net/gh/suzyzaq/auth-cert-db@main/api/shard/{{shard}}.json`
+- URL：`https://supply-auto-project.oss-cn-hangzhou.aliyuncs.com/auth-cert-db/api/shard/{{shard}}.json`
 - 然后代码节点提取：
 ```python
 def main(shard: dict, hits: list) -> dict:
@@ -86,8 +86,8 @@ def main(shard: dict, hits: list) -> dict:
 ## 直接调用示例（curl）
 
 ```bash
-curl -s https://cdn.jsdelivr.net/gh/suzyzaq/auth-cert-db@main/api/index.json     # 查"惠普"在分片 0 和 9
-curl -s https://cdn.jsdelivr.net/gh/suzyzaq/auth-cert-db@main/api/shard/0.json   # 取"惠普/HP"的 11 条授权+10 条商标证
+curl -s https://supply-auto-project.oss-cn-hangzhou.aliyuncs.com/auth-cert-db/api/index.json     # 查"惠普"在分片 0 和 9
+curl -s https://supply-auto-project.oss-cn-hangzhou.aliyuncs.com/auth-cert-db/api/shard/0.json   # 取"惠普/HP"的 11 条授权+10 条商标证
 ```
 
 ## 备注

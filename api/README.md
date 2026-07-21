@@ -3,18 +3,33 @@
 > 数据来源：欧菲斯 SCS 平台授权列表 + 资质池商标注册证，每日 17:00 自动更新。
 > 适用：Dify / Coze / 任意 HTTP 客户端，按**品牌**查询授权书与商标注册证，只返回命中数据（KB 级），无需下载整页。
 
+## ⚠️ 接口域名（重要）
+
+Dify 等云服务器请使用 **jsDelivr CDN 域名**（github.io 在国内服务器经常不可达）：
+
+```
+https://cdn.jsdelivr.net/gh/suzyzaq/auth-cert-db@main/api/
+```
+
+备用域名（任一可达即可）：
+- `https://fastly.jsdelivr.net/gh/suzyzaq/auth-cert-db@main/api/`
+- `https://gcore.jsdelivr.net/gh/suzyzaq/auth-cert-db@main/api/`
+- `https://testingcf.jsdelivr.net/gh/suzyzaq/auth-cert-db@main/api/`
+
+浏览器访问查询页面仍用：https://suzyzaq.github.io/auth-cert-db/
+
 ## 接口清单（全部 GET，返回 JSON）
 
 | 接口 | 说明 | 大小 |
 |---|---|---|
-| `https://suzyzaq.github.io/auth-cert-db/api/index.json` | 品牌索引：品牌名 → 分片号 | ~60 KB |
-| `https://suzyzaq.github.io/auth-cert-db/api/shard/{分片号}.json` | 品牌数据分片（含授权+商标明细） | 每片 ≤300 KB |
+| `api/index.json` | 品牌索引：品牌名 → 分片号 | ~60 KB |
+| `api/shard/{分片号}.json` | 品牌数据分片（含授权+商标明细） | 每片 ≤300 KB |
 
 index.json 结构：
 ```json
 {
   "today": "2026-07-20",
-  "generated": "2026-07-20 18:00:00",
+  "generated": "2026-07-20 18:58:14",
   "shardCount": 12,
   "brandCount": 4212,
   "brands": { "惠普/HP": 0, "惠普": 9, "惠普/hp": 9, "...": 3 }
@@ -27,8 +42,7 @@ shard/N.json 结构：
   "惠普/HP": {
     "auth": [ {授权记录}, ... ],
     "cert": [ {商标注册证记录}, ... ]
-  },
-  "其他品牌": { "auth": [], "cert": [] }
+  }
 }
 ```
 
@@ -42,7 +56,7 @@ shard/N.json 结构：
 
 **节点1 · HTTP 请求（GET 索引）**
 - 方法：GET
-- URL：`https://suzyzaq.github.io/auth-cert-db/api/index.json`
+- URL：`https://cdn.jsdelivr.net/gh/suzyzaq/auth-cert-db@main/api/index.json`
 
 **节点2 · 代码执行（品牌模糊匹配 → 待查分片）**（Python3）
 ```python
@@ -56,7 +70,7 @@ def main(index: dict, keyword: str) -> dict:
 
 **节点3 · HTTP 请求（GET 分片，多个分片用迭代）**
 - 方法：GET
-- URL：`https://suzyzaq.github.io/auth-cert-db/api/shard/{{shard}}.json`
+- URL：`https://cdn.jsdelivr.net/gh/suzyzaq/auth-cert-db@main/api/shard/{{shard}}.json`
 - 然后代码节点提取：
 ```python
 def main(shard: dict, hits: list) -> dict:
@@ -72,12 +86,12 @@ def main(shard: dict, hits: list) -> dict:
 ## 直接调用示例（curl）
 
 ```bash
-curl -s https://suzyzaq.github.io/auth-cert-db/api/index.json     # 查"惠普"在分片 0 和 9
-curl -s https://suzyzaq.github.io/auth-cert-db/api/shard/0.json   # 取"惠普/HP"的 11 条授权+10 条商标证
+curl -s https://cdn.jsdelivr.net/gh/suzyzaq/auth-cert-db@main/api/index.json     # 查"惠普"在分片 0 和 9
+curl -s https://cdn.jsdelivr.net/gh/suzyzaq/auth-cert-db@main/api/shard/0.json   # 取"惠普/HP"的 11 条授权+10 条商标证
 ```
 
 ## 备注
 
 - 同名品牌可能存在多个键（如 惠普 / 惠普/HP / 惠普/hp），建议按"包含关键词"模糊匹配后合并结果。
 - 附件链接为欧菲斯 OSS 公网地址，可直接打开预览。
-- 数据每日 17:00 自动更新，index.json 中 `today` 字段可校验数据日期。
+- 数据每日 17:00 自动更新并强制刷新 CDN 缓存；index.json 中 `today` 字段可校验数据日期。

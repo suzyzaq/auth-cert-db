@@ -94,4 +94,4 @@ curl -s https://supply-auto-project.oss-cn-hangzhou.aliyuncs.com/auth-cert-db/ap
 
 - 同名品牌可能存在多个键（如 惠普 / 惠普/HP / 惠普/hp），建议按"包含关键词"模糊匹配后合并结果。
 - 附件链接为欧菲斯 OSS 公网地址，可直接打开预览。
-- 数据每日 17:00 自动更新并强制刷新 CDN 缓存；index.json 中 `today` 字段可校验数据日期。
+- 数据每日 17:00 自动更新并同步到阿里云 OSS（源站直读，无缓存延迟）；index.json 中 `today` 字段可校验数据日期。
